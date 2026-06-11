@@ -1,5 +1,6 @@
 FROM alpine:latest
 RUN apk add --no-cache nginx
-COPY index.html /usr/share/nginx/html/
+RUN echo "<h1>Default page...</h1> > usr/share/nginx/html/index.html
+
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
