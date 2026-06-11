@@ -28,7 +28,7 @@ jobs:
     environment: production
     steps:
       - name: Masking AccountID
-      - run: echo "::add-mask:;${{ secrets.AWS_ACCOUNT_ID }}"
+        run: echo "::add-mask:;${{ secrets.AWS_ACCOUNT_ID }}"
       - run: echo "::add-mask:arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role"
 
       - name: checkout code
