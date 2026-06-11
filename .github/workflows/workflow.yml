@@ -55,6 +55,6 @@ jobs:
             ${{ steps.login-ecr.outputs.registry }}/my-apps:${{ github.sha }}
 
 
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
+#  deploy:
+#    runs-on: ubuntu-latest
+#    steps:
