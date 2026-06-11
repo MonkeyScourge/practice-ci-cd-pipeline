@@ -1,0 +1,60 @@
+# needs to:
+# BUILD
+#  - build/push image
+#  - authenticate aws via OIDC
+#  - authenticate to ECR and push image
+#  - ssh from workflow into ec2 to pull and run new image
+#  - test end to end; push code pipeline runs, ec2 serves right thing
+
+
+# 1. mask acc-id
+# 2. checkout code
+# 3. build image
+# 4. push to ecr
+# 5. ssh into ec2
+# 6. pull image from ecr
+
+name: test ci/cd pipeline
+on:
+  push:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Masking AccountID
+      - run: echo "::add-mask:;${{ secrets.AWS_ACCOUNT_ID }}"
+      - run: echo "::add-mask:arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role"
+
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: Configuring AWS creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role
+          aws-region: us-west-1
+          audience: sts.amazonaws.com
+
+      - name: login to ecr
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: setup buildx
+        uses: docker/setup-buildx-action@v4
+      - name: build image
+        uses: docker/build-push-action@v7
+        with:
+          push: false
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/my-apps:${{ github.sha }}
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
