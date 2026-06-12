@@ -51,7 +51,7 @@ jobs:
       - name: build image
         uses: docker/build-push-action@v7
         with:
-          push: false
+          push: true
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/my-apps:${{ github.sha }}
 
