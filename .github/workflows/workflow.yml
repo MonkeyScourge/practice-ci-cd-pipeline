@@ -28,8 +28,8 @@ jobs:
     environment: production
     steps:
       - name: Masking AccountID
-        run: echo "::add-mask:;${{ secrets.AWS_ACCOUNT_ID }}"
-      - run: echo "::add-mask:arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role"
+        run: echo "::add-mask::${{ secrets.AWS_ACCOUNT_ID }}"
+      - run: echo "::add-mask::arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role"
 
       - name: checkout code
         uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
       - name: Configuring AWS creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-build
           aws-region: us-west-1
           audience: sts.amazonaws.com
           mask-aws-account-id: true
@@ -48,6 +48,7 @@ jobs:
 
       - name: setup buildx
         uses: docker/setup-buildx-action@v4
+
       - name: build image
         uses: docker/build-push-action@v7
         with:
@@ -56,6 +57,31 @@ jobs:
             ${{ steps.login-ecr.outputs.registry }}/my-app:${{ github.sha }}
 
 
-#  deploy:
-#    runs-on: ubuntu-latest
-#    steps:
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+        - run: echo "::add-mask::${{ secrets.AWS_ACCOUNT_ID }}"
+        - run: echo "::add-mask::arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role"
+
+        - name: configure aws credentials for deploy
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            role-to-be-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}::role/github-actions-deploy
+            aws-region: us-west-2
+            audience: sts.amazonaws.com
+            mask-aws-account-id: true
+
+        - name: SSM send-commands to EC2
+          run: |
+            aws ssm send-command \
+              --instance-ids i-${{ secrets.INSTANCE_ID}} \
+              --document-name "AWS-RunShellScript" \
+              --parameters 'commands=["",""]' \
+              --region us-west-1
+
+
+
+
+
