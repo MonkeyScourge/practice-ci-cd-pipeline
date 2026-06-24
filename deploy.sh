@@ -15,7 +15,9 @@
   # basic error handling: exit if any command fails
 set -e
 image_tag=$1
-amazon_id=$2
+#amazon_id=$2
+  # get acc_id from parameter store
+amazon_id=(aws ssm get-parameter --name amazon_acc_id --with-decryption | jq -r '.Parameter.Value')
 
   # get aws-login-token for ecr
 aws ecr get-login-password --region us-west-1 | \
