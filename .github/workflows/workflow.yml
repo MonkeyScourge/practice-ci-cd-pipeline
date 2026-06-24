@@ -65,6 +65,8 @@ jobs:
         - run: echo "::add-mask::${{ secrets.AWS_ACCOUNT_ID }}"
         - run: echo "::add-mask::arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/oidc-federation-iam-role"
 
+        - uses: actions/checkout@v4
+
         - name: configure aws credentials for deploy
           uses: aws-actions/configure-aws-credentials@v4
           with:
