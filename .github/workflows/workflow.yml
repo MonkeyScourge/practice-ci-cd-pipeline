@@ -68,7 +68,7 @@ jobs:
         - name: configure aws credentials for deploy
           uses: aws-actions/configure-aws-credentials@v4
           with:
-            role-to-be-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}::role/github-actions-deploy
+            role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}::role/github-actions-deploy
             aws-region: us-west-1
             audience: sts.amazonaws.com
             mask-aws-account-id: true
