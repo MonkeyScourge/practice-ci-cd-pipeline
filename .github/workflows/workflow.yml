@@ -82,7 +82,7 @@ jobs:
             bash ssm-send-command.sh \
               "aws s3 cp s3://${{ secrets.BUCKET_NAME }}/workflow/deploy.sh /home/ubuntu/test.sh \
               && chmod 700 /home/ubuntu/test.sh \
-              && bash /home/ubuntu/test.sh ${{ github.sha }}"
+              && sudo bash /home/ubuntu/test.sh ${{ github.sha }}"
 
 #        - name: SSM send-commands to EC2
 #          run: |
