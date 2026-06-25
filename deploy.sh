@@ -22,8 +22,8 @@ amazon_id=$(aws ssm get-parameter --name amazon_acc_id --with-decryption | jq -r
 
   # get aws-login-token for ecr
 echo -e "\nLogging In..."
-echo whoami
-echo pwd
+whoami
+pwd
 aws ecr get-login-password --region us-west-1 | \
   docker login --username AWS \
   --password-stdin "$amazon_id".dkr.ecr.us-west-1.amazonaws.com 2>/dev/null
