@@ -75,6 +75,9 @@ jobs:
             audience: sts.amazonaws.com
             mask-aws-account-id: true
 
+        - name: Update deploy.sh to S3 Bucket 
+          run: aws s3 cp deploy.sh s3://${{ secrets.BUCKET_NAME }}/workflow/deploy.sh
+          
         - name: SSM send-commands to EC2
           env:
             INSTANCE_ID: ${{ secrets.INSTANCE_ID }}
