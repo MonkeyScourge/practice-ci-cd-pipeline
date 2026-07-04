@@ -35,7 +35,10 @@ docker pull "$amazon_id".dkr.ecr.us-west-1.amazonaws.com/my-app:"$image_tag"
   # stop running container: git.sha tag specifically
 echo -e "\nStopping Current Image..."
 #docker stop $(docker ps -q --filter "label=app.version=${CURRENT_SHA}") 2>/dev/null || true
-docker stop $(docker ps -q)
+
+if [ -n "$(docker ps -q)" ]; then
+	docker stop $(docker ps -q)
+fi
 
   # run new container
 echo -e "\nLaunching New Container..."
