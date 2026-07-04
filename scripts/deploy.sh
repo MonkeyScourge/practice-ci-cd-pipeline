@@ -47,7 +47,7 @@ docker run -d -p 8080:80 \
 #  "$amazon_id".dkr.ecr.us-west-1.amazonaws.com/my-app:"$image_tag"
 
   # prune unused images
-echo -e "\nPruning Old Containers..."
+echo -e "\nPruning Old Images..."
 docker image prune -a -f --filter "until=24h"
 
 echo -e "\nDeployment Complete."
