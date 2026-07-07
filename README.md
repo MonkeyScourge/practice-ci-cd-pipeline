@@ -15,7 +15,7 @@ flowchart LR
 	C --> D[Push Image to ECR Registry]
 	D --> E[Push Deploy script to S3 Bucket]
 	E --> F[Pull Deploy script from Bucket to EC2]
-	G --> H[Deploy script pulls image from ECR & runs Container]
+	F --> G[Deploy script pulls image from ECR & runs Container]
 
 ```
 ## Workflow
