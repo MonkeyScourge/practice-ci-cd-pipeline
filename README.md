@@ -8,7 +8,7 @@ them to an AWS EC2 insance via GitHub Actions, using OIDC for
 secure keyless authentication and access to AWS
 
 ## Architecture
-'''
+'''mermaid
 flowchart LR
 	A[Push to GitHub] --> B[Run Tests]
 	B --> C[Build Docker Image]
@@ -18,7 +18,7 @@ flowchart LR
 ## Workflow
 1. Build Phase (GitHub Actions - Build Job)
 	- Checks out code to runner
-	- Assume AWS role via OIDC (github-actions-build)
+	- Assumes an AWS role via OIDC (github-actions-build role)
 	- Logs into ECR
 	- Builds Docker image (Alpine:latest)
 	- Tags with ECR registry + repo name + GitHub SHA
@@ -26,9 +26,11 @@ flowchart LR
 
 2. Deploy Phase (GitHub Actions - Deploy Job)
 	- Waits for Build job completion
-	- Assume AWS role via OIDC (github-actions-deploy)
+	- Assumes an AWS role via OIDC (github-actions-deploy role)
 	- Uploads deploy.sh to S3 Bucket
 	- Sends SSM commands to EC2 Instance
+		- pulls deploy.sh from S3 Bucket
+		- gives executable permissions to script and runs it
 
 3. Helper Scripts
 	- deploy.sh
@@ -45,33 +47,33 @@ flowchart LR
 		- Executes aws ssm:send-command with proper formatted paremeters
 
 ## Key Decisions
-GitHub Actions
-	- Free adn native GitHub integration
+1. GitHub Actions
+	- Free and native GitHub integration
 	- easy to follow YAML config
 	- easier to setup, pickup, and learn than Jenkins
 
-OIDC Federation
+2. OIDC Federation
 	- No long-lived credentials
 	- Limited scope and very intentional permissions
 
-IAM Roles - not users
+3. IAM Roles - not users
 	- IAM users now considered legacy
 	- No hardcoded credentials
 	- Assumable and no secret rotations
 
-ECR (not dockerhub)
+4. ECR (not dockerhub)
 	- Private registry with IAM integration
 	- no rate limits and faster on AWS
 
-S3 Bucket for deploy.sh
+5. S3 Bucket for deploy.sh
 	- Easily accesable by EC2
 	- Central versioned storage
 	- frees up deployment logic from CI
 
-Separate deploy.sh script
+6. Separate deploy.sh script
 	- deployment logic easy to update without rebulding whole image
 
-ssm-send-command wrapper script
+7. ssm-send-command wrapper script
 	- SSM:send-command needs JSON string Array and quickly becomes unreadable
 	- wrapper accepts normal commands to significantly improve readability
 	- used in Deploy job in workflow
