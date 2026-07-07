@@ -8,13 +8,13 @@ them to an AWS EC2 insance via GitHub Actions, using OIDC for
 secure keyless authentication and access to AWS
 
 ## Architecture
-'''mermaid
+```mermaid
 flowchart LR
 	A[Push to GitHub] --> B[Run Tests]
 	B --> C[Build Docker Image]
 	C --> D[Push to Registry]
 	D --> E[Deploy]
-'''
+```
 ## Workflow
 1. Build Phase (GitHub Actions - Build Job)
 	- Checks out code to runner
