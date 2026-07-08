@@ -13,10 +13,10 @@ flowchart TD
     A[Push to GitHub] --> B[Workflow Triggered]
     B --> C[Build Docker Image]
     C --> D[Push Image to ECR]
-    C --> E[Push Deploy Script to S3]
-    D --> F[EC2 Pulls Deploy Script from S3]
-    E --> F
-    F --> G[Deploy Script Pulls Image from ECR & Runs Container]
+    B --> E[Push Deploy Script to S3]
+    E --> F[EC2 Pulls Deploy Script from S3]
+    D --> G[Deploy Script Pulls Image from ECR & Runs Container]
+    F --> G
 ```
 ## Workflow
 1. Build Phase (GitHub Actions - Build Job)
