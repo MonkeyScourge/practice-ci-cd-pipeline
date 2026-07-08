@@ -9,14 +9,14 @@ secure keyless authentication and access to AWS
 
 ## Architecture
 ```mermaid
-flowchart LR
-	A[Push to GitHub] --> B[Workflow Triggered]
-	B --> C[Build Docker Image]
-	C --> D[Push Image to ECR Registry]
-	D --> E[Push Deploy script to S3 Bucket]
-	E --> F[Pull Deploy script from Bucket to EC2]
-	F --> G[Deploy script pulls image from ECR & runs Container]
-
+flowchart TD
+    A[Push to GitHub] --> B[Workflow Triggered]
+    B --> C[Build Docker Image]
+    C --> D[Push Image to ECR]
+    C --> E[Push Deploy Script to S3]
+    D --> F[EC2 Pulls Deploy Script from S3]
+    E --> F
+    F --> G[Deploy Script Pulls Image from ECR & Runs Container]
 ```
 ## Workflow
 1. Build Phase (GitHub Actions - Build Job)
